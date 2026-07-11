@@ -1,0 +1,7 @@
+config,model,seed,hurst,crossover_point,bifolia_per_quire,tokens_per_page,p_habit
+vanilla,baseline,42.0,0.455,33118,,,
+habit_control,habit,42.0,0.493,1227,4.0,160.0,0.0
+habit_03,habit,42.0,0.567,21937,4.0,160.0,0.3
+habit_05,habit,42.0,0.662,1227,4.0,160.0,0.5
+habit_10,habit,42.0,0.688,1227,4.0,160.0,1.0
+voynich_b,reference,,0.677,812,,,

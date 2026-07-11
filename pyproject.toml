@@ -1,0 +1,32 @@
+[project]
+name = "naibbe-cipher"
+version = "0.1.0"
+description = "Naibbe cipher with a bifolium-based scribal habit extension"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+authors = [
+    { name = "Janik" },
+    { name = "Jacek" },
+]
+dependencies = [
+    "numpy==2.4.6",
+    "pandas==3.0.3",
+    "scipy==1.17.1",
+]
+
+[project.optional-dependencies]
+eval = [
+    "matplotlib==3.11.0",
+    "jupyter==1.1.1",
+]
+
+[project.scripts]
+naibbe-habit = "naibbe_habit:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]  # flat layout: include top-level .py modules
