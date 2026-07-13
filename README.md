@@ -61,9 +61,37 @@ python naibbe_habit.py --seed 42 --p-habit 0.5
 python -m unittest discover -s tests -v
 ```
 
-The checked-in experiment is exploratory and uses one plaintext and one seed
-(`42`). A detailed German-language account of its method, findings, trade-offs,
-and limitations is available in [`RESULTS.md`](RESULTS.md).
+The paper-compatible 100-text results and their limitations are documented in
+[`RESULTS.md`](RESULTS.md).
+
+## Paper-compatible 42-metric evaluation
+
+`naibbe_habit_evaluate.py` compares the habit model with the 20 published Naibbe
+reference ciphertexts using the same 42 linguistic metrics that Greshko used.
+The experiment uses the exact four normalized 8,000-letter excerpts from the
+paper supplement, stored separately under
+`figure_utils/habit_evaluation/data/`. Original spaces and punctuation are
+absent because Naibbe performs its own random unigram/bigram respacing.
+
+The historical Gaskell/Bowern program remains unchanged as
+`figure_utils/gaskell_bowern_2022/stats.py`. The experiment calls the separate
+`stats_habit.py` derivative, whose header documents every technical change:
+deterministic subset sampling and explicit, portable output paths. The 42
+metric definitions are unchanged.
+
+The default matrix consists of ten seeds, both Naibbe decks, and
+`p_habit = 0, 0.3, 0.5, 1`, giving 80 paired habit runs plus the 20 published
+references. The z-score calibration is frozen to the existing 952-document
+corpus so adding habit texts cannot move the benchmark.
+
+```bash
+uv sync --extra eval
+uv run --extra eval naibbe-habit-evaluate
+```
+
+The command writes per-run metrics, group summaries, paired metric deltas, and
+the Hurst-versus-distance plots to `figure_utils/habit_evaluation/results/`.
+Use `--help` to select fewer seeds or subset iterations for a smoke test.
 
 ---
 

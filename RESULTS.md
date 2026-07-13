@@ -1,232 +1,331 @@
-# Ergebnisse des bifoliumbasierten Habit-Modells
+# Lokale Tabellenpräferenzen im Naibbe-Modell
 
-**Stand** 12. Juli 2026
+**Stand** 13. Juli 2026
 
-**Status** Explorative Auswertung mit einem Klartext und einem Seed
+**Datengrundlage** 80 Modellläufe und 20 veröffentlichte Referenzläufe
 
-Dieser Bericht untersucht eine offene Frage aus Abschnitt 4.2 von Greshkos
-Aufsatz. Können lokale Entscheidungen beim Verschlüsseln eines Bifoliums dazu
-führen, dass im gebundenen Codex Zusammenhänge über größere Textabstände
-sichtbar werden?
+## Kurzfassung
 
-Das Experiment verbindet die materielle Ordnung des Codex mit einem einfachen
-Modell für eine Schreibgewohnheit. Eine Lage besteht aus mehreren gefalteten
-Doppelblättern oder Bifolia. Was bei der Arbeit auf einem Bifolium unmittelbar
-zusammengehörte, kann nach dem Falten und Binden auf weit voneinander
-entfernten Seiten stehen. Diese Beziehung bildet das Programm nach.
+Die Naibbe-Chiffre bildet zahlreiche statistische Merkmale des
+Voynich-Manuskripts nach, erreicht jedoch nicht dessen gemessene
+langreichweitige Korrelationen. Greshko regt deshalb an, lokale Gewohnheiten bei
+der Arbeit auf einzelnen Bifolia als möglichen Einfluss zu untersuchen
+(Greshko 2025, Abschnitt 4.2). Der vorliegende Versuch setzt diesen Gedanken in
+einem computationellen Modell um. Für jedes Bifolium wird eine bevorzugte
+Substitutionstabelle festgelegt, die mit der Wahrscheinlichkeit `p_habit`
+verwendet wird.
 
-## Ausgangspunkt
+Untersucht wurden zehn Zufallsstartwerte, zwei Kartenstapel und vier
+Ausprägungen von `p_habit`. Alle 80 Modellläufe beruhen auf demselben
+Vier-Text-Komposit. Sie sind daher verschiedene Realisierungen eines festen
+Versuchsaufbaus und keine unabhängigen Textkorpora. Als Vergleich dienen
+zusätzlich 20 von Greshko veröffentlichte Naibbe-Läufe.
 
-Der ursprüngliche Naibbe-Cipher erzeugt viele Eigenschaften, die an das
-Voynich-Manuskript erinnern. Die langreichweitigen Korrelationen von Voynich B
-werden nach Greshko jedoch nicht erreicht. Er nennt deshalb die Arbeit auf
-einzelnen Bifolia als möglichen Ansatz für weitere Versuche. Das Habit-Modell
-macht diese Forschungsrichtung als rechnerisches Experiment prüfbar.
+Damit die Veränderung des Hurst-Werts nicht isoliert betrachtet wird, fließen
+außerdem 42 weitere Textmerkmale in die Auswertung ein. Sie werden zu einem
+gemeinsamen Abstand gegenüber der Voynich-Transkription EVA Basic
+zusammengeführt. Dieser Wert wird im Folgenden als 42D-Distanz bezeichnet. Ein
+kleinerer Wert steht für ein insgesamt ähnlicheres Merkmalsprofil, ein größerer
+Wert für eine stärkere Abweichung.
 
-Das Habit-Modell übersetzt diesen Vorschlag in eine lokale Bevorzugung bei der
-Wahl der Substitutionstabelle. Der Eingriff bleibt damit auf eine
-Entscheidungsebene beschränkt, die bereits zum Kartensystem des Naibbe-Ciphers
-gehört.
+Mit steigendem `p_habit` nimmt der Hurst-Wert im verwendeten RMSF-Verfahren zu.
+Bei `p=0,3` steigt er im Mittel von `0,532` auf `0,584`, während sich der
+gemeinsame Abstand über 42 weitere Textmerkmale von `4,943` auf `5,003`
+erhöht. Bei `p=0,5` erreicht Hurst `0,622`. Zugleich wächst der Abstand auf
+`5,312`. Die Variante `p=1` liegt mit `H=0,722` über der
+Currier-B-Referenz und weist mit `8,182` den größten Abstand in den übrigen
+Merkmalen auf. Das Modell erzeugt somit unter den gewählten Bedingungen
+langreichweitige Persistenz, verändert dabei aber auch andere Strukturen des
+Chiffretexts.
 
-## Das Habit-Modell
+## Forschungsfrage und Modell
 
-Der Klartext wird zunächst nach dem Naibbe-Verfahren in Gruppen aus einem oder
-zwei Buchstaben zerlegt. Jeweils 160 Gruppen werden einer Seite zugeordnet.
-Vier Seiten gehören zu einem Bifolium. Das Programm bearbeitet die Bifolia von
-außen nach innen und stellt die Seiten anschließend wieder in Lesereihenfolge
-zusammen.
+Die Ausgangsüberlegung verbindet eine statistische Beobachtung mit der
+Materialität des Codex. Ein Bifolium ist ein gefaltetes Doppelblatt, dessen vier
+Seiten während der Herstellung räumlich zusammengehören. Nach dem Falten und
+Binden erscheinen diese Seiten an unterschiedlichen Stellen der
+Lesereihenfolge. Wenn eine verschlüsselnde Person ein Bifolium zusammenhängend
+bearbeitet und dabei bestimmte Tabellen bevorzugt, könnte eine lokale
+Gewohnheit im fertigen Codex als Beziehung über größere Textabstände sichtbar
+werden.
 
-Für die Größe einer Lage setzt das Experiment vier Bifolia an. Eine solche
-Standardlage umfasst acht Folia und damit sechzehn beschriebene Seiten. Diese
-Entscheidung folgt der kodikologischen Beschreibung des Voynich-Manuskripts
-(Zyats et al. 2016, 23-37; Zandbergen o. J.). Die Handschrift enthält daneben
-abweichende Lagen, fehlende Blätter und komplexe Ausfaltblätter. Sie werden hier
-nicht nachgebildet, weil allein der Einfluss von `p_habit` untersucht werden
-soll.
+Das Modell ist keine Rekonstruktion eines historischen Schreibvorgangs. Es
+operationalisiert eine einzelne Annahme und macht deren Folgen messbar.
+Untersucht wird, wie sich der erzeugte Chiffretext verändert, wenn für jedes
+Bifolium eine Naibbe-Tabelle bevorzugt wird.
 
-Für jedes nicht leere Bifolium wird eine bevorzugte Naibbe-Tabelle gezogen.
-Wir nennen sie die Favoritentabelle. Ihre Auswahl folgt denselben Gewichten wie
-der normale Kartenstapel. Bei jeder Tabellenwahl entscheidet `p_habit`, ob die
-Favoritentabelle oder die nächste Karte des Stapels verwendet wird. Der Stapel
-läuft über Seiten- und Lagengrenzen hinweg weiter.
+Der Parameter `p_habit` gibt an, wie wahrscheinlich diese bevorzugte Tabelle
+bei einer regulären Tabellenwahl verwendet wird. Bei `p=0` bleibt sie
+unberücksichtigt und jede Wahl folgt dem normalen Kartenstapel. Diese Variante
+dient als Kontrolle. Bei `p=0,3` stammen im Mittel 30 Prozent der Wahlen von der
+bevorzugten Tabelle, bei `p=0,5` sind bevorzugte Tabelle und Stapel gleich
+wahrscheinlich. Bei `p=1` wird die bevorzugte Tabelle für jede reguläre Wahl
+verwendet. Nur ein erneuter Versuch zur Vermeidung eines mehrdeutigen Bigramms
+greift dann auf den Stapel zurück.
 
-Bei `p_habit = 0` gibt es keine lokale Bevorzugung. Der Wert `1` bezeichnet die
-stärkste Variante. Dann wird zunächst immer die Favoritentabelle verwendet.
-Nur wenn ein Zweier-Token mehrdeutig wäre, greift der erneute Versuch auf den
-normalen Stapel zurück. So bleibt der Chiffretext eindeutig entschlüsselbar.
+Ein höherer Wert bündelt die Verwendung derselben Tabelle innerhalb eines
+Bifoliums. Da sowohl die bevorzugte Tabelle als auch die Stapelkarten nach den
+ursprünglichen Naibbe-Gewichten gezogen werden, soll der Parameter vor allem
+die lokale Verteilung verändern und nicht gezielt die globalen
+Tabellenhäufigkeiten verschieben.
 
-Die Favoritentabelle bildet die gemeinsame lokale Gewohnheit eines Bifoliums.
-Da sie und der Kartenstapel denselben Grundgewichten folgen, sollen sich die
-globalen Tabellenanteile im Erwartungswert nicht verschieben. Der Parameter
-bündelt die Auswahl vielmehr zeitlich und räumlich.
+## Textgrundlage und Versuchsaufbau
 
-Dieses Modell ist eine bewusst einfache Operationalisierung. `p_habit`, die
-Seitenlänge und die Bearbeitungsreihenfolge der Bifolia bilden die festen
-Versuchsannahmen. Die Größe von vier Bifolia ist eine kodikologisch begründete
-Modellkonstante.
+Der Klartext entspricht Greshkos Vier-Text-Sampler. Er setzt sich aus jeweils
+8.000 normalisierten Buchstaben aus Dantes *Divina Commedia*, Grossetestes *De
+sphaera*, einem lateinischen alchemistischen Herbal und Plinius'
+*Naturalis historia*, Buch 16, zusammen. Die vier Ausschnitte werden in dieser
+Reihenfolge verbunden. Wortgrenzen, Satzzeichen und Großschreibung fehlen
+bereits in der Vorlage, da Naibbe aus dem Buchstabenstrom eine neue Folge aus
+Ein- und Zweibuchstaben-Gruppen erzeugt.
 
-## Material und Vergleich
+Das Modell ordnet jeweils 160 dieser Gruppen einer Seite zu. Vier Bifolia bilden
+eine Lage mit 16 Seiten. Für jeden der Zufallsstartwerte 1 bis 10 wurden der
+52- und der 78-Karten-Stapel sowie `p=0`, `p=0,3`, `p=0,5` und `p=1`
+kombiniert. Auf diese Weise entstanden 80 Chiffretextläufe. Die vier
+Habit-Varianten eines Zufallsstartwerts verwenden dieselbe zufällige
+Klartextsegmentierung. Unterschiede zwischen ihnen lassen sich deshalb nicht
+allein auf eine andere Ein- und Zweibuchstaben-Aufteilung zurückführen.
 
-Als Klartext dient die lateinische Fassung von Plinius' *Naturalis historia*,
-Buch 16
-([`input/examples/nathist_book16.txt`](input/examples/nathist_book16.txt)). Die
-Referenz ist die
-[Currier-B-Transkription](<figure_utils/gaskell_bowern_2022/data/voynichese/Voynichese - Currier B - EVA Basic.txt>)
-in EVA Basic. Alle hier berichteten Naibbe-Läufe verwenden den Seed `42` und
-den Stapel mit 78 Karten.
+Die 20 veröffentlichten Naibbe-Läufe bilden eine zusätzliche Referenzgruppe.
+Sie sind nicht mit den neu erzeugten Läufen gepaart. Der Vergleich mit ihnen
+zeigt daher vor allem, ob die neue Kontrollgruppe in einem ähnlichen
+Wertebereich liegt. Die eigentliche Untersuchung des Habit-Effekts erfolgt
+innerhalb der gepaarten Modellläufe und bezieht jede Habit-Stufe auf `p=0` mit
+demselben Zufallsstartwert und Kartenstapel.
 
-Der Vanilla-Lauf führt `naibbe_v2.py` in seiner ursprünglichen zeilenweisen
-Form aus. Die Habit-Kontrolle nutzt bereits die neue Ganztext- und
-Bifolium-Pipeline, setzt aber `p_habit = 0`. Sie ist der wichtigere Vergleich
-für die Habit-Varianten, weil sich innerhalb dieser Gruppe nur die lokale
-Tabellenbevorzugung ändert. Die leicht abweichende Tokenzahl von Vanilla
-entsteht durch die Behandlung der Zeilengrenzen bei der Neuaufteilung des
-Klartexts.
+## Auswertung
 
-## Messung
+Die primäre Zielgröße ist der Hurst-Wert. Er fasst die Steigung der
+RMSF-Kurve über 20 Fenstergrößen zusammen und dient hier als Kennwert für
+langreichweitige Korrelationen. Mit derselben Binärkodierung und demselben
+Fitverfahren liegt die Currier-B-Transkription bei `H=0,677`. Die Ergebnisse
+sind an dieses konkrete Verfahren gebunden und werden nicht als allgemeine
+Eigenschaft des Chiffretexts verstanden.
 
-Für die RMSF-Auswertung wird jeder Chiffretext in eine binäre Folge übersetzt.
-Aus dieser Folge entsteht ein eindimensionaler Zufallsweg. Wir messen seine
-mittlere Schwankung für 20 Fenstergrößen zwischen ungefähr 20 und 50.000 Bits.
-Höchstens 500.000 Bits eines Textes gehen in die Rechnung ein.
+Als zweite Perspektive dienen 42 Metriken aus dem von Gaskell und Bowern
+entwickelten und von Greshko übernommenen Auswertungsskript (Gaskell und
+Bowern 2022). Sie erfassen unter anderem Tokenlängen, Wiederholungen,
+Zeichen- und N-Gramm-Verteilungen, Entropie, Komprimierbarkeit und
+positionsabhängige Verteilungen. Für jeden Chiffretext werden 100
+zusammenhängende Ausschnitte mit mindestens 200 Token ausgewertet und
+anschließend gemittelt. Diese Ausschnitte stabilisieren den Metrikwert eines
+Laufs. Sie gelten nicht als 100 unabhängige Beobachtungen.
 
-Die Steigung der RMSF-Kurve wird als Hurst-Wert `H` zusammengefasst. Ein Wert
-um `0,5` steht in dieser Auswertung für einen Verlauf ohne deutliche
-langreichweitige Persistenz. Höhere Werte zeigen stärkere Abhängigkeiten über
-größere Skalen. Mit demselben Verfahren liegt Voynich B bei `H = 0,677`.
+Zusammengenommen ergeben die 42 Messwerte für jeden Text ein Merkmalsprofil.
+Die einzelnen Werte verwenden unterschiedliche Skalen und lassen sich deshalb
+nicht unmittelbar miteinander vergleichen. Sie werden zunächst anhand von
+Greshkos Vergleichskorpus standardisiert. Anschließend wird für jedes Merkmal
+bestimmt, wie weit der untersuchte Text von „Voynichese - EVA Basic“ entfernt
+liegt. Die 42 Abstände werden zu einem gemeinsamen Wert zusammengeführt. Die
+Bezeichnung 42D verweist darauf, dass dieser Vergleich in einem Raum aus 42
+Merkmalsdimensionen erfolgt.
 
-Ergänzend berechnen wir die kumulative Autokorrelation bis zu einem Abstand von
-1.000 Bits. Hinzu kommen die Zahl der Token und Typen, die Type-Token-Ratio,
-die mittlere Tokenlänge sowie zwei Entropiemaße. Der ausgegebene
-Crossover-Punkt reagiert empfindlich auf kleine Änderungen. Wir behandeln ihn
-daher nicht als eigenständigen Befund.
+Ein Text, der in allen 42 Merkmalen dieselben Werte wie EVA Basic aufwiese,
+hätte eine Distanz von null. Je größer der Wert ausfällt, desto stärker weicht
+das Merkmalsprofil insgesamt von dieser Referenz ab. Die Distanz besitzt keine
+feste Obergrenze. Ihre Größenordnung lässt sich daher nur im Vergleich mit den
+anderen Läufen derselben Auswertung interpretieren. Ein Anstieg um `0,060` ist
+auch nicht als Zunahme um sechs Prozent zu lesen.
+
+Die 42D-Distanz ergänzt den Hurst-Wert und zeigt, ob dessen Veränderung mit
+einer Verschiebung der übrigen erfassten Textmerkmale einhergeht. Als
+zusammenfassender Wert macht sie jedoch nicht sichtbar, welche einzelnen
+Merkmale für den Abstand verantwortlich sind oder in welche Richtung sie sich
+verändern. Sie ist auch kein allgemeines Maß für Sprachlichkeit oder
+historische Plausibilität. Aus diesem Grund werden im Anschluss zusätzlich die
+42 Einzelmetriken betrachtet.
+
+Hurst und 42D-Distanz beziehen sich nicht auf genau dieselbe
+Voynich-Teilauswahl. Der Hurst-Vergleich verwendet Currier B, während die
+42D-Distanz auf EVA Basic für das gesamte Manuskript bezogen ist. Beide Werte
+werden deshalb getrennt berichtet und nicht zu einem Gesamtindex verrechnet.
+
+Die Untersuchung der 42 Einzelmetriken ist explorativ. Die angegebenen
+Bootstrap-Intervalle sind nicht für multiples Testen korrigiert. Einzelne
+Metriken werden daher nicht als eigenständige Nachweise interpretiert, sondern
+dienen dazu, die Richtung der Veränderungen im Merkmalsraum zu beschreiben.
 
 ## Ergebnisse
 
-| Konfiguration | `p_habit` | Token | Typen | TTR | Hurst `H` |
-|---|---|---|---|---|---|
-| Vanilla | - | 34.756 | 5.785 | 0,166 | 0,455 |
-| Habit-Kontrolle | 0,0 | 34.487 | 5.808 | 0,168 | 0,493 |
-| Schwache Bevorzugung | 0,3 | 34.487 | 5.797 | 0,168 | 0,567 |
-| Mittlere Bevorzugung | 0,5 | 34.487 | 5.587 | 0,162 | 0,662 |
-| Durchgängige Bevorzugung | 1,0 | 34.487 | 2.439 | 0,071 | 0,688 |
-| Voynich B | - | 23.297 | 5.468 | 0,235 | 0,677 |
+### Langreichweitige Korrelation und gemeinsamer Merkmalsabstand
 
-Die Habit-Kontrolle liegt mit `0,493` über dem Vanilla-Wert von `0,455`. Der
-Abstand beträgt `0,038`. Bei nur einem Seed lässt sich daraus noch kein stabiler
-Effekt der bifoliumweisen Bearbeitung ableiten. Die schwache Bevorzugung hebt
-den Hurst-Wert deutlicher auf `0,567` an.
-
-Bei `p_habit = 0,5` steigt `H` auf `0,662`. Der Abstand zu Voynich B beträgt
-damit nur noch `0,015`. Die durchgängige Bevorzugung überschreitet die Referenz
-mit `0,688` leicht. Ihr absoluter Abstand von `0,011` ist in diesem Lauf am
-kleinsten.
-
-Die kumulative Autokorrelation bis 1.000 Bits trennt die Varianten nur schwach.
-Der sichtbare Unterschied stammt vor allem aus der RMSF-Kurve über größere
-Fenster. Der Hurst-Wert sollte deshalb nicht für sich allein als Nachweis einer
-bestimmten Textgenese gelesen werden.
-
-## Vielfalt und Entropie
-
-Die mittlere Variante bewahrt die Typenvielfalt vergleichsweise gut. Gegenüber
-der Habit-Kontrolle sinkt die Zahl der Typen bei `p_habit = 0,5` von 5.808 auf
-5.587. Das entspricht einem Rückgang von knapp vier Prozent. Die TTR liegt mit
-`0,162` nahe am Vanilla-Wert von `0,166`.
-
-Bei durchgängiger Bevorzugung sieht das anders aus. Nur noch 2.439 Typen kommen
-vor. Gegenüber der Kontrolle fehlen rund 58 Prozent. Der Hurst-Wert liegt
-damit zwar nahe an Voynich B, doch der Chiffretext wird in einer anderen
-Hinsicht deutlich ärmer. Diese Variante erscheint deshalb nicht als die
-überzeugendste Einstellung.
-
-| Konfiguration | Zeichenentropie | Bedingte Zeichenentropie | Mittlere Tokenlänge |
+| Konfiguration | Läufe | Hurst, Mittelwert ± SD | 42D-Distanz zu EVA Basic, Mittelwert ± SD |
 |---|---|---|---|
-| Habit-Kontrolle | 3,856 | 2,500 | 4,827 |
-| Mittlere Bevorzugung | 3,858 | 2,494 | 4,821 |
-| Durchgängige Bevorzugung | 3,861 | 2,488 | 4,811 |
-| Voynich B | 3,968 | 2,429 | 4,822 |
+| Greshko, veröffentlichte Läufe | 20 | 0,539 ± 0,018 | 4,984 ± 0,125 |
+| `p=0` | 20 | 0,532 ± 0,021 | 4,943 ± 0,116 |
+| `p=0,3` | 20 | 0,584 ± 0,021 | 5,003 ± 0,134 |
+| `p=0,5` | 20 | 0,622 ± 0,023 | 5,312 ± 0,175 |
+| `p=1` | 20 | 0,722 ± 0,039 | 8,182 ± 0,200 |
 
-Die mittlere Tokenlänge verändert sich kaum. Auch die Zeichenentropie bleibt
-über die Naibbe-Varianten hinweg recht stabil. Am stärksten reagiert die Zahl
-der unterschiedlichen Token. Die TTR von Voynich B lässt sich allerdings nur
-eingeschränkt direkt vergleichen, weil der Referenztext kürzer ist und die TTR
-von der Korpusgröße abhängt.
+Die neu erzeugte Kontrolle und Greshkos veröffentlichte Läufe liegen bei Hurst
+und 42D-Distanz in einem ähnlichen Bereich. Daraus folgt nicht, dass beide
+Gruppen in allen Merkmalen gleich sind. Der Vergleich zeigt jedoch, dass die
+Kontrollgruppe bei den beiden zusammenfassenden Kennwerten keine grundlegende
+Verschiebung gegenüber den veröffentlichten Naibbe-Läufen aufweist.
 
-## Einordnung
+Innerhalb der gepaarten Modellläufe nimmt Hurst mit jedem untersuchten
+`p_habit`-Wert zu. Bei `p=0,3` beträgt die mittlere Zunahme gegenüber der
+Kontrolle `0,052`. Die 42D-Distanz nimmt um `0,060` zu. Bei `p=0,5` liegen die
+entsprechenden Veränderungen bei `0,090` und `0,369`. Für `p=1` steigt Hurst um
+`0,190`, während die Distanz um `3,240` zunimmt. Damit verläuft die Veränderung
+des Hurst-Werts über die untersuchten Parameterwerte monoton. Zugleich wächst
+der gemeinsame Abstand der übrigen Merkmale. Das Merkmalsprofil entfernt sich
+also insgesamt von EVA Basic, auch wenn sich einzelne der 42 Merkmale der
+Referenz annähern können.
 
-Der Versuch stützt zunächst eine begrenzte Aussage. Eine lokale Gewohnheit bei
-der Tabellenwahl kann in dieser Implementierung die gemessenen
-langreichweitigen Korrelationen erhöhen. Der stärkste Anstieg gegenüber der
-Kontrolle tritt erst bei mittlerer und durchgängiger Tabellenbevorzugung auf.
+![Hurst-Wert und 42D-Distanz der einzelnen Läufe](figure_utils/habit_evaluation/results/distance_hurst.svg)
 
-Als ausgewogenste der getesteten Einstellungen erscheint `p_habit = 0,5`.
-Sie nähert den Hurst-Wert deutlich an Voynich B an, ohne die Typenvielfalt so
-stark zu verringern wie die maximale Variante. Das ist jedoch eine Bewertung
-innerhalb dieses Experiments und keine historisch belegte Parameterwahl.
+Der Zusammenhang zeigt sich für `p=0,3` und `p=0,5` in beiden Kartenstapeln.
+Bei `p=0,3` liegen die mittleren Hurst-Werte bei `0,587` im 52-Karten-Stapel und
+`0,582` im 78-Karten-Stapel. Bei `p=0,5` betragen sie `0,622` und `0,621`. Erst
+bei `p=1` fällt der Unterschied zwischen den Stapeln mit `0,705` und `0,739`
+größer aus. Die 42D-Distanz bleibt für diese Variante in beiden Stapeln höher
+als für die anderen Parameterwerte.
 
-Von einer Bestätigung der Hypothese kann noch nicht gesprochen werden. Wir
-haben nur einen lateinischen Klartext und einen Seed untersucht. Der
-Zusammenhang könnte bei anderen Zufallsfolgen oder Texten schwächer ausfallen.
-Zudem hängt der Hurst-Wert von der verwendeten Transkription, der Binärkodierung,
-den Fenstergrößen und dem Fitbereich ab.
+### Veränderungen der einzelnen Metriken
 
-Der Nutzen des Modells liegt daher weniger in
-einem einzelnen möglichst ähnlichen Kennwert. Es macht vielmehr prüfbar,
-welche statistischen Folgen eine konkrete Annahme über den Schreibprozess hat.
-Eine solche Simulation kann historische Plausibilität nicht ersetzen. Sie
-kann aber zeigen, welche Annahmen mit den beobachteten Daten vereinbar wären
-und an welchen Stellen neue Probleme entstehen.
+Für jede Metrik wurde geprüft, ob ihr standardisierter Abstand zu EVA Basic im
+Vergleich mit der gepaarten Kontrolle ab- oder zunimmt. Bei `p=0,3` verringert
+sich der Abstand bei 17 der 42 Metriken und erhöht sich bei 25. Bei `p=0,5`
+liegen die entsprechenden Zahlen bei 14 und 28, bei `p=1` bei 9 und 33.
 
-## Nächste Schritte
+Bei `p=0,3` treten Abstandsabnahmen unter anderem bei der Form der
+Worthäufigkeitsverteilung, der Zahl unterschiedlicher Token, dem Zipf-Maß, der
+Entropie und den umgekehrten Tokenpaaren auf. Abstandszunahmen betreffen vor
+allem positionsbezogene Verteilungsmaße. Bei `p=0,5` wird dieses Muster
+ausgeprägter. Einige globale Merkmale bewegen sich weiterhin in Richtung EVA
+Basic, während die positionsbezogenen Maße größere Abstände aufweisen. Bei
+`p=1` gehören die sechs größten Abstandszunahmen vollständig zu diesen
+Positionsmaßen.
 
-Für eine belastbarere Auswertung brauchen wir mehrere Seeds sowie weitere
-lateinische und italienische Klartexte. Dann lassen sich Mittelwerte,
-Streuungen und Unsicherheitsintervalle angeben. So ließe sich prüfen, wie stabil
-der beobachtete Zusammenhang zwischen `p_habit` und dem Hurst-Wert ist.
+![Veränderung der 42 Einzelmetriken gegenüber der gepaarten Kontrolle](figure_utils/habit_evaluation/results/metric_deltas.svg)
 
-Die Seitenlängen und die Lagenstruktur könnten sich später enger am
-Voynich-Manuskript orientieren. Dazu gehören unterschiedlich lange Seiten,
-unregelmäßige Lagen und fehlende Blätter. Neben RMSF und Hurst sollten auch
-Wortgrammatik, positionsabhängige Glyphenverteilungen und Wiederholungsmuster
-gemeinsam bewertet werden.
+Die zeilenbezogenen Metriken benötigen eine gesonderte Einordnung. Für den
+Vergleich wurden alle Chiffretexte nach Greshkos Vorlage in künstliche Zeilen
+mit zehn Token umgebrochen. Die Maße `wordbias_lines_*` beschreiben daher keine
+historischen Manuskriptzeilen, sondern Zeilen der statistischen Aufbereitung.
+Ihre Veränderung zeigt eine Verschiebung innerhalb dieses
+Auswertungsformats. Sie erlaubt keine unmittelbare Aussage über die
+Zeilenstruktur des Voynich-Manuskripts.
+
+## Diskussion
+
+Im untersuchten Versuchsaufbau geht die bifoliumgebundene Tabellenpräferenz
+systematisch mit höheren Hurst-Werten einher. Dieser Zusammenhang zeigt sich
+in allen 20 gepaarten Kombinationen aus Zufallsstartwert und Kartenstapel. Bei
+`p=0,3` steigt der Mittelwert gegenüber der Kontrolle von `0,532` auf `0,584`,
+bei `p=0,5` auf `0,622`. Die lokale Bündelung der Tabellenwahl verstärkt somit
+jene langreichweitigen Korrelationen, die im ursprünglichen Naibbe-Modell
+schwächer ausgeprägt sind als in Currier B.
+
+Für die Interpretation ist entscheidend, dass bevorzugte Tabelle und
+Kartenstapel aus derselben gewichteten Verteilung hervorgehen. Das Modell führt
+also keine neuen Substitutionstabellen ein und verändert ihre globalen Anteile
+nicht gezielt. Verändert wird ihre räumliche und zeitliche Verteilung. Eine
+Tabelle wird innerhalb eines Bifoliums wiederholt verwendet, während die
+zugehörigen Seiten in der Lesereihenfolge an verschiedenen Stellen erscheinen.
+Der Anstieg des Hurst-Werts lässt sich vor diesem Hintergrund als Folge dieser
+lokalen Bündelung verstehen. Die kodikologische Einheit des Bifoliums wird im
+Modell auf diese Weise zu einer textstatistisch wirksamen Einheit.
+
+Die Annäherung des Hurst-Werts an Currier B geht allerdings nicht mit einer
+gleichförmigen Annäherung der übrigen Textmerkmale einher. Bei `p=0,3` nimmt
+die 42D-Distanz gegenüber der Kontrolle um `0,060` zu. Hinter dieser geringen
+Veränderung des Gesamtwertes stehen unterschiedliche Bewegungen der
+Einzelmetriken. 17 Merkmale nähern sich EVA Basic an, 25 entfernen sich davon.
+Ein annähernd stabiler Gesamtabstand darf deshalb nicht mit der Bewahrung aller
+erfassten Eigenschaften gleichgesetzt werden.
+
+Bei stärkerer Tabellenpräferenz tritt diese Verschiebung deutlicher hervor.
+Mit `p=0,5` nähert sich der Hurst-Wert weiter an die Currier-B-Referenz an,
+während die 42D-Distanz um `0,369` steigt. Bei `p=1` liegt der Hurst-Wert über
+der Referenz und die Distanz nimmt um `3,240` zu. Einen wesentlichen Anteil an
+dieser Entwicklung haben die positionsbezogenen Maße. Ihre Aussagekraft bleibt
+hier begrenzt, da ein Teil von ihnen auf künstlich erzeugten
+Zehn-Token-Zeilen beruht und nicht auf der überlieferten Zeilenstruktur des
+Manuskripts.
+
+Die Ergebnisse sprechen damit für einen spezifischen, aber begrenzten Befund.
+Eine lokale Tabellenpräferenz kann innerhalb des Naibbe-Modells
+langreichweitige Korrelationen erzeugen. Mit zunehmender Stärke dieser
+Präferenz verändert sich jedoch zugleich das Profil weiterer Textmerkmale. Der
+Hurst-Wert beschreibt daher keine allgemeine Annäherung an das
+Voynich-Manuskript, sondern einen einzelnen Aspekt des erzeugten Chiffretexts.
+Das Experiment weist eine bifoliumgebundene Gewohnheit als möglichen
+Modellmechanismus aus. Rückschlüsse auf den historischen Herstellungsprozess
+des Manuskripts lassen sich daraus nicht ableiten.
+
+Für die weitere Untersuchung ist das Bifolium dennoch eine analytisch
+produktive Einheit. Seine Einbindung macht sichtbar, wie eine Annahme über die
+materielle Organisation eines Codex statistische Eigenschaften eines
+generierten Textes beeinflussen kann. Ob der beobachtete Zusammenhang über den
+verwendeten Vier-Text-Komposit hinaus Bestand hat, muss durch weitere
+Klartexte, alternative Lagenmodelle und veränderte Seitenlängen geprüft werden.
+
+## Grenzen
+
+Die 80 Modellläufe beruhen auf einem festen Komposit aus vier Textausschnitten.
+Weitere Klartexte und veränderte Reihenfolgen wären nötig, um zwischen einem
+allgemeinen Habit-Effekt und Besonderheiten dieses Komposits unterscheiden zu
+können. Zehn Zufallsstartwerte erlauben eine erste Einschätzung der Streuung,
+bilden aber keine umfassende Sensitivitätsanalyse.
+
+Das Seitenmodell bleibt regelmäßig. Es verwendet 160 Token pro Seite und vier
+Bifolia pro Lage. Unterschiedlich lange Seiten, unregelmäßige Lagen, fehlende
+Blätter und Ausfaltblätter werden nicht berücksichtigt. Auch die Dauer einer
+lokalen Gewohnheit ist durch das Bifolium fest vorgegeben.
+
+Der Hurst-Wert hängt von der verwendeten Binärkodierung, den Fenstergrößen und
+dem Fitbereich ab. Die Aussagen gelten deshalb für das hier eingesetzte
+RMSF-Verfahren. Die Einzelmetrik-Auswertung ist explorativ und enthält keine
+Korrektur für multiples Testen. Hinzu kommt die künstliche Zeilenbildung, die
+insbesondere die Interpretation der zeilenbezogenen Positionsmaße begrenzt.
+
+Eine weitere Untersuchung sollte daher zusätzliche Textsampler, andere
+Seitenlängen und mehrere Lagenmodelle einbeziehen. Für die
+positionsabhängigen Metriken wären Vergleiche mit verschiedenen künstlichen
+Zeilenlängen oder eine Auswertung ohne zeilenbezogene Maße erforderlich.
 
 ## Reproduzierbarkeit
 
-Code, Tabellen und Abbildungen sind gemeinsam versioniert. Die Tests prüfen
-unter anderem die Bifoliumzuordnung, den Kontrollfall ohne Habit, den Umgang
-mit mehrdeutigen Zweier-Token, die Seed-Reproduzierbarkeit und die vollständige
-Entschlüsselbarkeit.
+Der vollständige Auswertungsablauf ist in `naibbe_habit_evaluate.py`
+implementiert. Das historische Statistikskript von Gaskell und Bowern bleibt
+unverändert. Die getrennte Ableitung `stats_habit.py` ergänzt einen festen
+Zufallsstartwert und plattformunabhängige Ausgabepfade, ohne die 42
+Metrikdefinitionen zu verändern. Klartextausschnitte, Prüfsummen,
+Einzelergebnisse und Abbildungen liegen im Repository.
 
 ```bash
 uv sync --extra eval
 python -m unittest discover -s tests -v
-jupyter nbconvert --to notebook --execute naibbe_experiment.ipynb \
-  --output naibbe_experiment_executed.ipynb \
-  --output-dir /tmp \
-  --ExecutePreprocessor.timeout=600
+uv run --extra eval naibbe-habit-evaluate
 ```
 
-Das Notebook schreibt die Tabellen und Abbildungen an ihre versionierten
-Zielorte im Repository.
+Der Standardlauf verwendet die Zufallsstartwerte 1 bis 10, beide Kartenstapel,
+alle vier Habit-Stufen sowie Analyse- und Bootstrap-Startwert `2025`. Zwei
+unabhängige reduzierte Wiederholungsläufe erzeugten byteidentische
+CSV-Dateien.
 
-## Dateien
+Die vollständigen Ergebnisse sind in folgenden Dateien abgelegt.
 
-- [Hurst- und Crossover-Werte](figure_utils/rmsf/ssc_hurst_comparison.csv)
-- [Token-, Typen- und Entropiemetriken](figure_utils/rmsf/ssc_metrics_comparison.csv)
-- [RMSF-Vergleich mit Voynich B](figure_utils/rmsf/long_range_plots/ssc_vs_voynich_b_overlay.png)
-- [Kumulative Autokorrelation](figure_utils/rmsf/long_range_plots/ssc_autocorrelation_comparison.png)
-- [Ausführbares Experiment](naibbe_experiment.ipynb)
+- [Alle 100 Läufe und 42 Metriken](figure_utils/habit_evaluation/results/runs.csv)
+- [Gruppenzusammenfassung](figure_utils/habit_evaluation/results/summary.csv)
+- [Gepaarte Veränderungen der Einzelmetriken](figure_utils/habit_evaluation/results/metric_deltas.csv)
+- [Rohe Metrikausgabe](figure_utils/habit_evaluation/results/metrics_raw.csv)
+- [Hurst-Distanz-Diagramm](figure_utils/habit_evaluation/results/distance_hurst.svg)
+- [Heatmap der Einzelmetriken](figure_utils/habit_evaluation/results/metric_deltas.svg)
 
 ## Literatur
 
-Greshko, Michael A. 2025. "The Naibbe cipher: a substitution cipher that
-encrypts Latin and Italian as Voynich Manuscript-like ciphertext."
+Gaskell, Daniel E., und Claire L. Bowern. 2022. „Gibberish after all?
+Voynichese is statistically similar to human-produced samples of meaningless
+text.“ *CEUR Workshop Proceedings, International Conference on the Voynich
+Manuscript 2022*, University of Malta.
+
+Greshko, Michael A. 2025. „The Naibbe cipher: a substitution cipher that
+encrypts Latin and Italian as Voynich Manuscript-like ciphertext.“
 *Cryptologia*. <https://doi.org/10.1080/01611194.2025.2566408>.
 
-Zandbergen, René. o. J. "Description of the Voynich MS." Zugriff am 12. Juli
-2026. <https://www.voynich.nu/descr.html>.
-
-Zyats, Paula, Erin Mysak, Jens Stenger, Marie-France Lemay, Anikó Bezur und
-David D. Driscoll. 2016. "Physical Findings." In *The Voynich Manuscript*,
-herausgegeben von Raymond Clemens, 23-37. New Haven: Yale University Press.
+Greshko, Michael A. 2025. *Supplementary materials for The Naibbe cipher*.
+Zenodo. <https://doi.org/10.5281/zenodo.16415087>.
